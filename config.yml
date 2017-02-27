@@ -1,0 +1,12 @@
+input_dir: 'src'
+output_dir: 'public'
+layout_dir: 'layouts'
+
+md_ext:
+  - '.md'
+  - '.mkd'
+  - '.markdown'
+
+defaults:
+  layout: 'simple'
+  title: 'Hello'

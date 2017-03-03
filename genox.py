@@ -116,6 +116,7 @@ def index(directory, md_ext, config):
                     continue
                 site[relfpath] = config['defaults'].copy()
                 site[relfpath].update(metadata)
+                site[relfpath]['site'] = config['site']
                 site[relfpath]['content'] = content
 
     return site
@@ -127,7 +128,7 @@ def build(site, dst, renderer):
         context['content'] = md2html(context['content'])
         slug = context.get('slug', None)
         if slug:
-            out_fpath = os.path.join(os.path.basename(fpath), slug)
+            out_fpath = os.path.join(os.path.dirname(fpath), slug)
         else:
             out_fpath = fpath
         out_fpath = os.path.join(dst, out_fpath)

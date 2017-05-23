@@ -69,11 +69,11 @@ def rebuild_tree_hardlinks(src, dst, ignore_ext):
     shutil.copytree(src, dst, copy_function=os.link, ignore=shutil.ignore_patterns(*['*' + ext for ext in ignore_ext]))
 
 
-def get_jinja_renderer(layout_dir, defaults):
+def get_jinja_renderer(layout_dir, defaults, globals={}):
     jinja_loader = FileSystemLoader(layout_dir)
     jinja_env = Environment(loader=jinja_loader)
     jinja_env.filters['datetimeformat'] = lambda x, y: x.strftime(y)
-    jinja_env.globals = {}
+    jinja_env.globals = globals
 
     def renderer(layout, context):
         t = jinja_env.get_template(layout)
@@ -117,15 +117,14 @@ def index(directory, md_ext, config):
                 site[relfpath] = config['defaults'].copy()
                 site[relfpath].update(metadata)
                 site[relfpath]['site'] = config['site']
-                site[relfpath]['content'] = content
+                site[relfpath]['raw_content'] = content
+                site[relfpath]['content'] = md2html(content)
 
     return site
 
 
 def build(site, dst, renderer):
     for fpath, context in site.items():
-        # convert content to html
-        context['content'] = md2html(context['content'])
         slug = context.get('slug', None)
         if slug:
             out_fpath = os.path.join(os.path.dirname(fpath), slug)
@@ -140,9 +139,9 @@ def main():
     config = yaml.load(open('config.yml').read())
     src, dst, layout_dir, md_ext = config['input_dir'], config['output_dir'], config['layout_dir'], config['md_ext']
     rebuild_tree_hardlinks(src, dst, md_ext)
-    jinja_renderer = get_jinja_renderer(layout_dir, config['defaults'])
     site = index(src, md_ext, config)
-    print(site)
+    jinja_renderer = get_jinja_renderer(layout_dir, config['defaults'], globals=site)
+    # print(site)
     build(site, dst, jinja_renderer)
 
 

@@ -175,10 +175,6 @@ create an index page.
 Well customizations like this is where `hooks` come in. Read
 more below.
 
-## Features
-
-TODO
-
 ## Hooks
 
 TODO
@@ -207,3 +203,22 @@ it's meant to be forked (the real reason is I am lazy and python doesn't
 make it easy to publish packages). The code is very small, easy to read. Just
 fork this repository in your website root and start hacking.
 
+## Production Deployment
+
+### Nginx
+
+Here is a sample nginx location block to serve sites built using genox
+
+```
+    location / {
+        root /srv/site.com/{{ build_dir }};
+        index index.html index.htm;
+        autoindex off;
+        add_header Last-Modified $date_gmt;
+        add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+        if_modified_since off;
+        expires off;
+        etag off;
+        try_files $uri $uri/ $uri.html =404;
+    }
+```

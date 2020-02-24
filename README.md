@@ -26,7 +26,44 @@ TODO
 
 ## Config
 
-TODO
+```
+# The directory where actual content stays
+input_dir: content
+
+# The directory where our jinja templates stay
+layout_dir: layouts
+
+# The directory where our static files (assets) stay
+# eg. css, js, images, etc.
+# We want to place files in static directory which do not need
+# to be processed.
+static_dir: static
+
+# The final produced site goes in there.
+output_dir: _build
+
+# these are the default values used for file-specific
+# configuration
+defaults:
+    layout: post
+    author: ox
+    author_link: https://oxal.org
+
+# these are site-specific values available under the
+# config['site'] variable or {{ site }} in templates
+# tl;dr these are user customizable config values
+site:
+    title: "genox - such k00l much w0w"
+    description: "Now this is the story all about how my site got flipped..."
+    google_analytics_id: "GA-WOW"
+
+# markdown extension you want to process
+md_ext:
+  - '.md'
+  - '.mkd'
+  - '.markdown'
+  - '.rst' # rst is not supported but maybe your markdown files end with rst?
+```
 
 ## Features
 

@@ -1,12 +1,19 @@
-input_dir: 'src'
-output_dir: 'public'
-layout_dir: 'layouts'
+input_dir: "content" # I use "src" in some of my websites
+layout_dir: "layouts" # can also be named "template", it"s up to you man.
+static_dir: "static" # can be named "assets"
+output_dir: "_build" # some folks like to use "public"
 
 md_ext:
-  - '.md'
-  - '.mkd'
-  - '.markdown'
+  - ".md"
+  - ".mkd"
+  - ".markdown"
 
 defaults:
-  layout: 'simple'
-  title: 'Hello'
+  layout: "post"
+  title: "Genox Site"
+  author: "Genox"
+  author_link: "https://oxal.org/projects/genox/"
+
+site:
+  title: "Genox Site Title"
+  google_analytics: "UA-GENOX"

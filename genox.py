@@ -21,7 +21,7 @@ class GenHook:
     def after_config_read(config):
         manifest_file_name = config.get("manifest_file_name", None)
         if manifest_file_name and os.path.isfile(manifest_file_name):
-            config["manifest"] = json.load(open('manifest_file_name'))
+            config["manifest"] = json.load(open(manifest_file_name))
 
 
     def call_hook(hook_name, site, context):
@@ -236,7 +236,6 @@ def cli():
     logging.info("Starting genox..")
     t_start = time.time()
     site = main()
-    print("Built: {} pages.".format(len(site['pages'])))
     print("Site built in \033[43m\033[31m{:0.3f}\033[0m\033[49m seconds. That's quite fast, ain't it?".format(
         time.time() - t_start))
     logging.info("Finished. Exiting...")

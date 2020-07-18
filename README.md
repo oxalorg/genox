@@ -230,3 +230,17 @@ Here is a sample nginx location block to serve sites built using genox
         try_files $uri $uri/ $uri.html =404;
     }
 ```
+
+## Moar
+
+### vim plugin
+
+Genox comes with it's very own, very bad, unsuable vim-plugin!
+
+Check it out here: https://github.com/oxalorg/vim-genox
+
+## Share some <3
+
+ > “Pare down to the essence, but don't remove the poetry.” ― Leonard Koren
+
+ Please leave a star :)

@@ -33,13 +33,25 @@ class GenHook:
 
     @staticmethod
     def index_list(site, context):
+        from itertools import groupby
         index_list = []
-        for k, _ in site.items():
+        tags = set()
+        for k, page in site.items():
+            page_tags = page.get('tags')
+            if page_tags:
+                tags.update(page_tags)
             if k.startswith(context['container_path']) and k != context['rel_path']:
                 index_list.append(site[k])
 
         index_list.sort(key=lambda x: x['date'], reverse=True)
+
+        index_group = {}
+        for k, it in groupby(index_list, lambda x: x['date'].year):
+            index_group[k] = list(it)
+
         context['index_list'] = index_list
+        context['tags'] = tags
+        context['index_group'] = index_group
 
 
 def extract_yaml(text):

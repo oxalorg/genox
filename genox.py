@@ -11,6 +11,9 @@ from jinja2 import Environment, FileSystemLoader
 
 GENOX_IGNORE_LIST = {}
 
+class MetaParseException(ValueError):
+    pass
+
 
 class GenHook:
     def call_hook(hook_name, site, context):
@@ -18,8 +21,7 @@ class GenHook:
         if func:
             func(site, context)
         else:
-            logging.error('Invalid Hook name')
-            raise NameError('Invalid Hook name')
+            logging.info('Invalid Hook name')
 
     @staticmethod
     def index_list(site, context):
@@ -116,8 +118,8 @@ def render(src, dst, context, renderer):
     if not layout.endswith('.html'):
         layout += '.html'
     if os.path.isfile(dst):
-        print("A file already exists at the destination: ", dst)
-        print("Skipping src file: ", src, " to prevent overwriting.")
+        logging.info(f"A file already exists at the destination: {dst}")
+        logging.info(f"Skipping src file: {src} to prevent overwriting.")
         return
     # make directories
     dst_path = Path(dst)
@@ -132,7 +134,7 @@ def index(directory, md_ext, config):
     src = config['input_dir']
     for root, dirs, files in os.walk(directory, topdown=True):
         if genox_ignored(root):
-            print("Ignoring directory: ", root)
+            logging.info(f"Ignoring directory: {root}")
             # Ignoring all subdirectories also
             dirs[:] = []
             continue
@@ -141,7 +143,7 @@ def index(directory, md_ext, config):
             fpath = os.path.join(root, fname)
             relfpath = os.path.relpath(fpath, src)
             if genox_ignored(fpath):
-                print("Ignoring file: ", fpath)
+                logging.info(f"Ignoring file: {fpath}")
                 continue
             fbase, fext = os.path.splitext(fname)
 
@@ -149,7 +151,7 @@ def index(directory, md_ext, config):
                 try:
                     metadata, content = extract_yaml(open(fpath).read())
                 except:
-                    print("Skipping file with invalid metadata: ", fpath)
+                    logging.info(f"Skipping file with invalid metadata: {fpath}")
                     continue
                 site[relfpath] = config['defaults'].copy()
                 site[relfpath].update(metadata)
@@ -182,6 +184,7 @@ def build(site, dst, renderer):
         logging.info("Rendering: {}".format(output_fpath))
         hooks = context.get('hooks', None)
         if hooks:
+            logging.info(hooks)
             for hook_name in hooks:
                 GenHook.call_hook(hook_name, site, context)
         render(fpath, output_fpath, context, renderer)
@@ -201,19 +204,20 @@ def main():
     rebuild_tree_hardlinks(src, dst, static_dir, md_ext)
     site = index(src, md_ext, config)
     jinja_renderer = get_jinja_renderer(layout_dir, config['defaults'], globals=site)
-    logging.info("DEST SITE: " ,dst)
     build(site, dst, jinja_renderer)
     return site
 
 
 def cli():
-    logging.basicConfig(level=logging.ERROR)
+    logging.basicConfig(filename='.genox.log', filemode='w', level=logging.DEBUG)
     logging.info("Starting genox..")
     t_start = time.time()
     site = main()
     print("Built: {} pages.".format(len(site['pages'])))
     print("Site built in \033[43m\033[31m{:0.3f}\033[0m\033[49m seconds. That's quite fast, ain't it?".format(
         time.time() - t_start))
+    logging.info("Finished. Exiting...")
+
 
 if __name__ == '__main__':
     cli()

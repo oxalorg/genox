@@ -18,7 +18,10 @@ SSGs.
 
 ## Philosophy
 
-TODO
+- Follow the Zen of Python, as close as possible.
+- Code over configuration.
+- Forkable.
+- Keep it simple. Reeeeeeeeeeeealy simple.
 
 ## Config
 
@@ -184,34 +187,29 @@ TODO
 
 ## Installation
 
-Simply copy `genox.py`, `requirements.txt` and `config.yml` in
-to your project directory.
-
-Create a virtualenv (or not) and install the requirements.
+Installing `genox` from pypi is as simple as:
 
 ```
-virtualenv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
+pip3 install genox
 ```
 
-Then run
+
+This installs a script named `genox` which can be used directly on
+the command line:
 
 ```
-python3 genox.py
+cd ~/www/oxal.org/
+genox
+# ^this should give you an error as we have not yet added a config.yml file
 ```
+
+Now copy `config.yml` from this repo in to your project directory.
 
 Originally genox was meant to be forked (the real reason is I am lazy and python doesn't
 make it easy to publish packages). The code is very small, easy to read. Just
 fork this repository in your website root and start hacking.
 
 But I got fedup of cloning genox on different systems, and decided to set it up on pypi anyways.
-
-```
-pip3 install genox
-cd ~/blog
-genox
-```
 
 ## Production Deployment
 

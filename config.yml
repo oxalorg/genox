@@ -17,3 +17,5 @@ defaults:
 site:
   title: "Genox Site Title"
   google_analytics: "UA-GENOX"
+
+manifest_file_name: "manfiest.json"

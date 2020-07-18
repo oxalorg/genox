@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import time
+import json
 from pathlib import Path
 
 import yaml
@@ -16,6 +17,13 @@ class MetaParseException(ValueError):
 
 
 class GenHook:
+    @staticmethod
+    def after_config_read(config):
+        manifest_file_name = config.get("manifest_file_name", None)
+        if manifest_file_name and os.path.isfile(manifest_file_name):
+            config["manifest"] = json.load(open('manifest_file_name'))
+
+
     def call_hook(hook_name, site, context):
         func = getattr(GenHook, hook_name)
         if func:
@@ -130,7 +138,7 @@ def render(src, dst, context, renderer):
 
 
 def index(directory, md_ext, config):
-    site = {}
+    site = {"_config": config}
     src = config['input_dir']
     for root, dirs, files in os.walk(directory, topdown=True):
         if genox_ignored(root):
@@ -173,6 +181,8 @@ def index(directory, md_ext, config):
 
 def build(site, dst, renderer):
     for fpath, context in site.items():
+        if fpath == "_config":
+            continue
         slug = context.get('slug', None)
         container_path = context.get('container_path')
         output_fpath = os.path.join(dst, container_path)
@@ -192,6 +202,7 @@ def build(site, dst, renderer):
 
 def main():
     config = yaml.load(open('config.yml').read(), Loader=yaml.FullLoader)
+    GenHook.after_config_read(config)
     src, dst, layout_dir, md_ext = config['input_dir'], config['output_dir'], config['layout_dir'], config['md_ext']
     global GENOX_IGNORE_LIST
     try:

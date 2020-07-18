@@ -1,4 +1,7 @@
 __pycache__/
-/.idea/
-.oxgen.log
-/public/
+/build
+/dist
+*.egg-info
+/public
+
+.genox.log

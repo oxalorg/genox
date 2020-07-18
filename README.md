@@ -63,6 +63,9 @@ md_ext:
   - '.mkd'
   - '.markdown'
   - '.rst' # rst is not supported but maybe your markdown files end with rst?
+
+# manifest file used for reading dynamic static bundles from the js world
+manifest_file_name: "manifest.json"
 ```
 
 ## How genox builds the site?
@@ -182,7 +185,7 @@ TODO
 ## Installation
 
 Simply copy `genox.py`, `requirements.txt` and `config.yml` in
-to your project directory. 
+to your project directory.
 
 Create a virtualenv (or not) and install the requirements.
 
@@ -192,16 +195,23 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-Then run 
+Then run
 
 ```
 python3 genox.py
 ```
 
-I won't be uploading it to pypi, because this is not meant to be installed -
-it's meant to be forked (the real reason is I am lazy and python doesn't
+Originally genox was meant to be forked (the real reason is I am lazy and python doesn't
 make it easy to publish packages). The code is very small, easy to read. Just
 fork this repository in your website root and start hacking.
+
+But I got fedup of cloning genox on different systems, and decided to set it up on pypi anyways.
+
+```
+pip3 install genox
+cd ~/blog
+genox
+```
 
 ## Production Deployment
 

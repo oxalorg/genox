@@ -211,6 +211,37 @@ fork this repository in your website root and start hacking.
 
 But I got fedup of cloning genox on different systems, and decided to set it up on pypi anyways.
 
+## Moar Features
+
+### Manifest - Integration with Node ecosystem
+
+To be able to integrate genox with javascript ecosystem which bundle css/js files into bundles,
+we use a manifest file. The file with `manifest_file_name` must be preset in project root. It will be read
+and be available in the `{{ _config.manifest }}` template variable.
+
+### Debug
+
+When `DEBUG` environment variable is set to `1`, a debug flag is set which
+can be accessed using `{{ _config.DEBUG }}` template variable.
+
+```
+$ DEBUG=1 genox
+```
+
+Example of Manifest and Debug - Here during development we use `out.css` as is.
+But for production our asset pipeline could be producing a `hashed` file (eg:
+`out.Has7d6h3Jdesa.css` which gets written to the manifest file by our node builder.
+
+Genox can then read that file from the manifest and use it in template.
+
+```
+  {% if _config.DEBUG %}
+  <link href="/static/bundle/out.css" rel="stylesheet">
+  {% else %}
+  <link href="/static/bundle/{{ _config.manifest["out.css"] }}" rel="stylesheet">
+  {% endif %}
+```
+
 ## Production Deployment
 
 ### Nginx

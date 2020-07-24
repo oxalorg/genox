@@ -7,7 +7,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="genox",
-    version="0.2.0",
+    version="0.2.1",
     description="genox - extremely simple static site generator",
     license="MIT",
     long_description=long_description,

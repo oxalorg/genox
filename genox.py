@@ -19,6 +19,9 @@ class MetaParseException(ValueError):
 class GenHook:
     @staticmethod
     def after_config_read(config):
+        DEBUG = os.getenv("DEBUG", False)
+        config["DEBUG"] = DEBUG
+
         manifest_file_name = config.get("manifest_file_name", None)
         if manifest_file_name and os.path.isfile(manifest_file_name):
             config["manifest"] = json.load(open(manifest_file_name))

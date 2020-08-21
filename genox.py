@@ -99,6 +99,7 @@ _md_extras = [
     "footnotes",
     "header-ids",
     "markdown-in-html",
+    "tables",
     # "metadata",
 ]
 _markdown = markdown2.Markdown(extras=_md_extras).convert

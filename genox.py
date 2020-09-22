@@ -99,6 +99,8 @@ _md_extras = [
     "footnotes",
     "header-ids",
     "markdown-in-html",
+    "strike",
+    "smarty-pants",
     "tables",
     # "metadata",
 ]

@@ -22,6 +22,6 @@ setup(
         [console_scripts]
         genox=genox:cli
     """,
-    install_requires=["markdown2", "pyyaml", "jinja2"],
+    install_requires=["markdown2", "pyyaml", "jinja2", "pygments"],
     python_requires='>=3.6',
 )

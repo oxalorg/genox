@@ -184,6 +184,11 @@ def index(directory, md_ext, config):
                 site[relfpath]['site'] = config['site']
                 site[relfpath]['raw_content'] = content
                 site[relfpath]['content'] = md2html(content)
+                if not site[relfpath].get('excerpt', None):
+                    excerpt_separator = "<!--more-->"
+                    site[relfpath]['excerpt'] = ""
+                    if excerpt_separator in content:
+                        site[relfpath]['excerpt'] = content.split('<!--more-->')[0].replace('\n', ' ').strip()
                 site[relfpath]['rel_path'] = relfpath
                 site[relfpath]['rel_url'] = "/{}/".format(os.path.relpath(os.path.join(root, fbase), src))
                 site[relfpath]['container_path'] = os.path.relpath(root, src)

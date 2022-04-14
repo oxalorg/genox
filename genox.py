@@ -4,11 +4,13 @@ import shutil
 import time
 import json
 from pathlib import Path
+from datetime import date
+from datetime import datetime
 
-import yaml
 import markdown2
+import yaml
 from jinja2 import Environment, FileSystemLoader
-
+import re
 
 GENOX_IGNORE_LIST = {}
 
@@ -33,6 +35,7 @@ class GenHook:
             func(site, context)
         else:
             logging.info('Invalid Hook name')
+            raise ValueError('Invalid Hook name')
 
     @staticmethod
     def index_list(site, context):
@@ -98,14 +101,27 @@ _md_extras = [
     "fenced-code-blocks",
     "footnotes",
     "header-ids",
-    "markdown-in-html",
     "strike",
     "smarty-pants",
     "tables",
+    "markdown-in-html",
+    "link-patterns",
     # "metadata",
 ]
-_markdown = markdown2.Markdown(extras=_md_extras).convert
 
+_pattern = (
+    r'((([A-Za-z]{3,9}:(?:\/\/)?)'  # scheme
+    r'(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+(:\[0-9]+)?'  # user@hostname:port
+    r'|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)'  # www.|user@hostname
+    r'((?:\/[\+~%\/\.\w\-_]*)?'  # path
+    r'\??(?:[\-\+=&;%@\.\w_]*)'  # query parameters
+    r'#?(?:[\.\!\/\\\w]*))?)'  # fragment
+    r'(?![^<]*?(?:<\/\w+>|\/?>))'  # ignore anchor HTML tags
+    r'(?![^\(]*?\))'  # ignore links in brackets (Markdown links and images)
+)
+LINK_PATTERNS = [(re.compile(_pattern),r'\1')]
+_markdown = markdown2.Markdown(extras=_md_extras, link_patterns=LINK_PATTERNS).convert
+print(_markdown('http://www.google.com'))
 
 def md2html(md):
     return _markdown(md)
@@ -222,6 +238,25 @@ def build(site, dst, renderer):
                 GenHook.call_hook(hook_name, site, context)
         render(fpath, output_fpath, context, renderer)
 
+def ghost_exporter(site):
+    posts = []
+    for path, post in site.items():
+        data = {}
+        if path.startswith("blog/"):
+            print(path)
+            if post.get('date'):
+                data['title'] = post['title']
+                data['slug'] = post['slug']
+                data['status'] = "published"
+                data['published_at'] = int(datetime.combine(post['date'], datetime.min.time()).timestamp()) * 1000
+                print(data)
+                data['html'] = post['content']
+                print("-------")
+                posts.append(data)
+
+    ghost = {"data": {"posts": posts}}
+    with open('ghost.json', 'w', encoding='utf-8') as f:
+        json.dump(ghost, f, ensure_ascii=False, indent=4)
 
 def main():
     config = yaml.load(open('config.yml').read(), Loader=yaml.FullLoader)
@@ -237,7 +272,9 @@ def main():
     static_dir = config['static_dir']
     rebuild_tree_hardlinks(src, dst, static_dir, md_ext)
     site = index(src, md_ext, config)
+    ghost_exporter(site)
     jinja_renderer = get_jinja_renderer(layout_dir, config['defaults'], globals=site)
+    # print(site)
     build(site, dst, jinja_renderer)
     return site
 
@@ -249,6 +286,7 @@ def cli():
     site = main()
     print("Site built in \033[43m\033[31m{:0.3f}\033[0m\033[49m seconds. That's quite fast, ain't it?".format(
         time.time() - t_start))
+    # print("Built: {} pages.".format(len(oxgen.site['pages'])))
     logging.info("Finished. Exiting...")
 
 

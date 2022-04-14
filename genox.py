@@ -121,7 +121,6 @@ _pattern = (
 )
 LINK_PATTERNS = [(re.compile(_pattern),r'\1')]
 _markdown = markdown2.Markdown(extras=_md_extras, link_patterns=LINK_PATTERNS).convert
-print(_markdown('http://www.google.com'))
 
 def md2html(md):
     return _markdown(md)
@@ -243,15 +242,12 @@ def ghost_exporter(site):
     for path, post in site.items():
         data = {}
         if path.startswith("blog/"):
-            print(path)
             if post.get('date'):
                 data['title'] = post['title']
                 data['slug'] = post['slug']
                 data['status'] = "published"
                 data['published_at'] = int(datetime.combine(post['date'], datetime.min.time()).timestamp()) * 1000
-                print(data)
                 data['html'] = post['content']
-                print("-------")
                 posts.append(data)
 
     ghost = {"data": {"posts": posts}}

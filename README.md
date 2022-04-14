@@ -211,6 +211,12 @@ fork this repository in your website root and start hacking.
 
 But I got fedup of cloning genox on different systems, and decided to set it up on pypi anyways.
 
+**Another way to install**
+
+I personally don't use the pypi version. I instead use `pip install -e ~/projects/genox`, this way all my sites directly use the most latest code in genox. I can change the source and get updates instantly across all my sites.
+
+I would recommend you fork genox and do the same. Genox is extremely hackable.
+
 ## Moar Features
 
 ### Manifest - Integration with Node ecosystem

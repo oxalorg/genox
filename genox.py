@@ -141,10 +141,17 @@ def rebuild_tree_hardlinks(src, dst, static_dir, ignore_ext):
     shutil.copytree(static_dir, os.path.join(dst, static_dir), copy_function=os.link)
 
 
+def jinja_time_formatter(x, y):
+    if x is not None and y is not None:
+        return x.strftime(y)
+    else:
+        return ""
+
 def get_jinja_renderer(layout_dir, defaults, globals={}):
     jinja_loader = FileSystemLoader(layout_dir)
     jinja_env = Environment(loader=jinja_loader)
-    jinja_env.filters['datetimeformat'] = lambda x, y: x.strftime(y)
+    # jinja_env.filters['datetimeformat'] = lambda x, y: x.strftime(y)
+    jinja_env.filters['datetimeformat'] = jinja_time_formatter
     jinja_env.globals = globals
 
     def renderer(layout, context):

@@ -46,6 +46,9 @@ class GenHook:
             page_tags = page.get('tags')
             if page_tags:
                 tags.update(page_tags)
+            draft = page.get('draft')
+            if draft:
+                continue
             if k.startswith(context['container_path']) and k != context['rel_path']:
                 index_list.append(site[k])
 

@@ -1,7 +1,11 @@
-.PHONY: build upload release
+.PHONY: build upload release init install
+
+init:
+	python3 -m venv venv
+	venv/bin/pip install -r requirements.txt
 
 install:
-	pip install -e .
+	venv/bin/pip install -e .
 
 build:
 	rm -rf dist

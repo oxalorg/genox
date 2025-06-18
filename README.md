@@ -56,6 +56,7 @@ defaults:
 # config['site'] variable or {{ site }} in templates
 # tl;dr these are user customizable config values
 site:
+  url: "https://oxal.org"
   title: "genox - such k00l much w0w"
   description: "Now this is the story all about how my site got flipped..."
   google_analytics_id: "GA-WOW"

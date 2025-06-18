@@ -209,6 +209,7 @@ def index(directory, md_ext, config):
                 site[relfpath]['site'] = config['site']
                 site[relfpath]['raw_content'] = content
                 site[relfpath]['content'] = md2html(content)
+                site[relfpath]['published_at'] = int(datetime.combine(metadata.get('date', date(1970, 1, 1)), datetime.min.time()).timestamp()) * 1000
                 if not site[relfpath].get('excerpt', None):
                     excerpt_separator = "<!--more-->"
                     site[relfpath]['excerpt'] = ""
@@ -266,6 +267,24 @@ def ghost_exporter(site):
     with open('ghost.json', 'w', encoding='utf-8') as f:
         json.dump(ghost, f, ensure_ascii=False, indent=4)
 
+def sitemap(site, dst):
+    sitemap = []
+    site_items = filter(lambda x: x[0].startswith("blog/") and not x[1].get('draft', False), site.items())
+    site_items = sorted(site_items, key=lambda x: x[1]['published_at'], reverse=True)
+    for path, post in site_items:
+        sitemap.append({
+           "url": f"{post['site']['url']}{post['rel_url']}",
+        })
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for page in sitemap:
+        xml += '  <url>\n'
+        xml += f'    <loc>{page["url"]}</loc>\n'
+        xml += '  </url>\n'
+    xml += '</urlset>'
+    with open(os.path.join(dst, 'sitemap.xml'), 'w', encoding='utf-8') as f:
+        f.write(xml)
+
 def main():
     config = yaml.load(open('config.yml').read(), Loader=yaml.FullLoader)
     GenHook.after_config_read(config)
@@ -284,6 +303,7 @@ def main():
     jinja_renderer = get_jinja_renderer(layout_dir, config['defaults'], globals=site)
     # print(site)
     build(site, dst, jinja_renderer)
+    sitemap(site, dst)
     return site
 
 

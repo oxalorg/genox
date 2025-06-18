@@ -214,6 +214,8 @@ def index(directory, md_ext, config):
                     site[relfpath]['excerpt'] = ""
                     if excerpt_separator in content:
                         site[relfpath]['excerpt'] = content.split('<!--more-->')[0].replace('\n', ' ').strip()
+                    else:
+                        site[relfpath]['excerpt'] = content[:200] + "..."
                 site[relfpath]['rel_path'] = relfpath
                 site[relfpath]['rel_url'] = "/{}/".format(os.path.relpath(os.path.join(root, fbase), src))
                 site[relfpath]['container_path'] = os.path.relpath(root, src)

@@ -216,6 +216,9 @@ def index(directory, md_ext, config):
                     'container_path': os.path.relpath(root, src),
                     'images': [],
                 })
+                # find all images from html content
+                for image in re.findall(r'<img.*?src="(.*?)".*?>', fconfig['content']):
+                    fconfig['images'].append(image)
                 if not fconfig.get('excerpt', None):
                     excerpt_separator = "<!--more-->"
                     fconfig['excerpt'] = ""

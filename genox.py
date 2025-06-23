@@ -204,29 +204,33 @@ def index(directory, md_ext, config):
                 except:
                     logging.info(f"Skipping file with invalid metadata: {fpath}")
                     continue
-                site[relfpath] = config['defaults'].copy()
-                site[relfpath].update(metadata)
-                site[relfpath]['site'] = config['site']
-                site[relfpath]['raw_content'] = content
-                site[relfpath]['content'] = md2html(content)
-                site[relfpath]['published_at'] = int(datetime.combine(metadata.get('date', date(1970, 1, 1)), datetime.min.time()).timestamp()) * 1000
-                if not site[relfpath].get('excerpt', None):
+                fconfig = config['defaults'].copy()
+                fconfig.update(metadata)
+                fconfig.update({
+                    'site': config['site'],
+                    'raw_content': content,
+                    'content': md2html(content),
+                    'published_at': int(datetime.combine(metadata.get('date', date(1970, 1, 1)), datetime.min.time()).timestamp()) * 1000,
+                    'rel_path': relfpath,
+                    'rel_url': "/{}/".format(os.path.relpath(os.path.join(root, fbase), src)),
+                    'container_path': os.path.relpath(root, src),
+                    'images': [],
+                })
+                if not fconfig.get('excerpt', None):
                     excerpt_separator = "<!--more-->"
-                    site[relfpath]['excerpt'] = ""
+                    fconfig['excerpt'] = ""
                     if excerpt_separator in content:
-                        site[relfpath]['excerpt'] = content.split('<!--more-->')[0].replace('\n', ' ').strip()
+                        fconfig['excerpt'] = content.split('<!--more-->')[0].replace('\n', ' ').strip()
                     else:
-                        site[relfpath]['excerpt'] = content[:200] + "..."
-                site[relfpath]['rel_path'] = relfpath
-                site[relfpath]['rel_url'] = "/{}/".format(os.path.relpath(os.path.join(root, fbase), src))
-                site[relfpath]['container_path'] = os.path.relpath(root, src)
+                        fconfig['excerpt'] = content[:200] + "..."
                 if fbase == "_index":
-                    site[relfpath]['slug'] = os.path.basename(root)
-                    site[relfpath]['is_index'] = True
-                    site[relfpath]['rel_url'] = "/{}/".format(os.path.relpath(root, src))
+                    fconfig['slug'] = os.path.basename(root)
+                    fconfig['is_index'] = True
+                    fconfig['rel_url'] = "/{}/".format(os.path.relpath(root, src))
                 else:
-                    site[relfpath]['slug'] = fbase
-                    site[relfpath]['rel_url'] = "/{}/".format(os.path.relpath(os.path.join(root, fbase), src))
+                    fconfig['slug'] = fbase
+                    fconfig['rel_url'] = "/{}/".format(os.path.relpath(os.path.join(root, fbase), src))
+                site[relfpath] = fconfig
     return site
 
 

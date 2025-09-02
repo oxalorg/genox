@@ -2,6 +2,14 @@
 
 Because simplicity is a virtue.
 
+Installation for the lazy:
+
+```python
+uv tool install genox
+```
+
+for everyone else, read along to make `genox` YOUR OWN! 
+
 ## Why yet another static site generator?
 
 I've used Jekyll, Hugo, Gatsby, Pelican, and countless other

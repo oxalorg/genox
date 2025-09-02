@@ -2,17 +2,25 @@
 
 Because simplicity is a virtue.
 
-Installation for the lazy:
+Quickstart for the lazy:
 
-```python
+```bash
 uv tool install genox
+```
+
+-or-
+
+```bash
 git clone git@github.com:oxalorg/genox.git
-cd genox/example-blog
+cd genox
+uv venv
+uv pip install -e .
+cd example-blog
 genox
 cd _build && python3 -m http.server 2025
 ```
 
-for everyone else, read along to make `genox` YOUR OWN! 
+Now you have a forked `genox.py` which you can make YOUR OWN! Want to change something? Just change the python code!
 
 ## Why yet another static site generator?
 

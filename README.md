@@ -6,6 +6,10 @@ Installation for the lazy:
 
 ```python
 uv tool install genox
+git clone git@github.com:oxalorg/genox.git
+cd genox/example-blog
+genox
+cd _build && python3 -m http.server 2025
 ```
 
 for everyone else, read along to make `genox` YOUR OWN! 

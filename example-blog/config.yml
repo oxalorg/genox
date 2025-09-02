@@ -1,0 +1,28 @@
+input_dir: 'src'
+output_dir: '_build'
+layout_dir: 'layouts'
+static_dir: 'static'
+
+md_ext:
+  - '.md'
+  - '.mkd'
+  - '.markdown'
+
+defaults:
+  layout: 'post'
+  title: 'example'
+  draft: False
+  author: 'example'
+  author_social_handle: '@example@fosstodon.org'
+  author_link: 'https://fosstodon.org/@example'
+
+site:
+  name: "Example blog"
+  baseurl: /
+  url: 'https://example.com'
+  title: "Example blog"
+  description: |
+    Example blog.
+
+author: example
+author_link: /

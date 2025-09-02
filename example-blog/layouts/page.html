@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+<article class="page">
+  <h1>{{ title }}</h1>
+  {{ content }}
+  {% if has_index %}
+  {% if tags %}
+  <!-- <h4>Filter by Tags</h4> -->
+  <!-- <div class="tag-container">
+       <span class="tag" style="background-color:#333333;color:#ffffff">#all</span>
+       {% for tag in tags %}
+       <span class="tag">{{ tag }}</span>
+       {% endfor %}
+       </div> -->
+  {% endif %}
+  {{ index_list }}
+  <div style="min-height:300px;">
+    {% for year, posts in index_group.items() %}
+    <h4 class="year-heading">{{ year }}</h4>
+    <ul>
+      {% for item in posts %}
+      <li data-tags="{{ item.tags|join(',') }}">
+        <a href="{{ item.rel_url }}">{{ item.title }}</a>
+        &mdash; <time
+          datetime="{{ date }}">{{ item.date | datetimeformat('%b %d') }}</time>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endfor %}
+  </div>
+  {% endif %}
+</article>
+{% endblock %}
+
+{% block scripts %}
+<script charset="utf-8">
+  window.onload = function() {
+    var coolColors = ['#fbf1a9', '#86ddc5', ]
+    var blogPosts = Array.from(document.querySelectorAll("li[data-tags]"));
+    var yearHeadings = Array.from(document.querySelectorAll("h4.year-heading"));
+    var tagMap = {}
+
+    function populateTagMap() {
+      blogPosts.map(function(post) {
+        var post_tags = post.dataset.tags;
+        if (post_tags !== "") {
+          post_tags.split(',').map(function(tag) {
+            if (tagMap.hasOwnProperty(tag))
+              tagMap[tag].push(post)
+            else
+              tagMap[tag] = [post, ]
+          })
+        }
+      })
+    }
+
+    function registerTagClickHandler() {
+      var tagContainer = document.querySelectorAll(".tag");
+      tagContainer.map(function(tagBubble) {
+        tagBubble.addEventListener('click', onTagClick);
+      })
+    }
+
+    function onTagClick(e) {
+      var tag = e.target.innerText;
+        console.log("Tag is: ", tag)
+      if (tag == "#all") {
+        showYearHeadings();
+        showAllPosts();
+      } else if (tag) {
+        hideAllPosts();
+        hideYearHeadings();
+        showAllPostsWith(tag);
+      } else {
+        showAllPosts();
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    function showAllPosts() {
+      blogPosts.map(function(post) {
+        post.style.display = 'list-item';
+      })
+
+    }
+
+    function showAllPostsWith(tag) {
+      tagMap[tag].map(function(post) {
+        console.log("Showing: ", post)
+        post.style.display = 'list-item';
+      })
+    }
+
+    function hideAllPosts() {
+      blogPosts.map(function(post) {
+        post.style.display = 'none';
+      })
+    }
+
+    function hideYearHeadings() {
+      yearHeadings.map(function(heading) {
+        heading.style.display = 'none';
+      })
+    }
+
+    function showYearHeadings() {
+      yearHeadings.map(function(heading) {
+        heading.style.display = 'block';
+      })
+    }
+
+    populateTagMap();
+    registerTagClickHandler();
+  }
+</script>
+{% endblock %}

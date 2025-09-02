@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- ============================================================================================-->
+<!-- Using the minimal css framework: http://github.com/oxalorg/sakura -->
+<!-- JOIN THE DARK SIDE -->
+<!-- ============================================================================================-->
+
+<head>
+  <!-- Config -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Information -->
+  <title>{% block title %}{{ site.name }}{% endblock %}</title>
+
+  {% block seo %}
+  {% endblock %}
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Assets -->
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ site.baseurl }}static/css/genox-pygments.css">
+  <link rel="stylesheet" href="{{ site.baseurl }}static/css/normalize.css">
+  <link id="sakura-css" rel="stylesheet" href="{{ site.baseurl }}static/css/sakura.css">
+  <style>
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-size: 1.8rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+        sans-serif;
+    }
+
+    @media screen and (min-width: 800px) {
+      body {
+        font-size: 2.0rem;
+          /* padding: 0px;
+             background-color: #e2e2e2; */
+      }
+
+        /* .post {
+           background-color: white;
+           padding: 16px;
+           box-shadow: 0 0 6px rgba(0,0,0,.2);
+           } */
+    }
+
+    code {
+      font-family: monospace;
+    }
+
+    blockquote {
+      margin-left: 0px;
+    }
+
+    blockquote p {
+	margin-bottom: 1.5rem;
+    }
+
+    .footnotes {
+	font-size: 1.5rem;
+    }
+
+    .footnotes hr {
+       opacity: 50%;
+    }
+
+    .footnotes p {
+	margin-bottom: 0.5rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-weight: 700;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    main {
+      margin-top: 5rem;
+    }
+
+    .tag-container {
+      display: flex;
+      justify-content: start;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      border: 1px solid #333333;
+      border-radius: 24px;
+      margin-right: 8px;
+      background-color: #ffffff;
+      display: inline-block;
+      padding: 4px 12px;
+      margin-bottom: 8px;
+      font-size: 0.9em;
+      color: #000000;
+      cursor: pointer;
+    }
+
+    .post h1 {
+      margin-bottom: 4rem;
+    }
+
+    nav {
+      text-align: center;
+    }
+
+    #nav-brand-wrapper {
+      display: block;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    @media (min-width: 767px) {
+      nav {
+        text-align: left;
+      }
+
+      #nav-brand-wrapper {
+        display: inline;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav style="position:relative">
+      <div id="nav-brand-wrapper">
+        <a class="sakura-blossom no-border sans" href="/">{{ site.name }}</a>
+      </div>
+      [<a class="sakura-fade no-border" href="/about">about</a>,
+      <a class="sakura-fade no-border" href="/projects/"> projects</a>,
+      <a class="sakura-fade no-border" href="/blog/"> blog</a>]
+      <a class="sakura-blossom no-border" href="#" id="switch-theme"
+        title="Change theme" style="position:absolute; top: 4px; right: 12px;">
+        <svg style="width: 21px; height: 21px;" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5
+          3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13
+          3z"></path>
+        </svg></a>
+    </nav>
+  </header>
+  <main>
+    {%- block body -%}{{ content }}{%- endblock -%}
+  </main>
+  <script src="{{ site.baseurl }}static/js/base.js"></script>
+  {% block scripts %}
+  {% endblock %}
+</body>
+
+</html>

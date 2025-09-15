@@ -45,12 +45,13 @@ class GenHook:
         index_list = []
         tags = set()
         for k, page in site.items():
+            draft = page.get('draft')
+            if draft:
+                logging.info(f"Skipping draft: {page.get("title")}")
+                continue
             page_tags = page.get('tags')
             if page_tags:
                 tags.update(page_tags)
-            draft = page.get('draft')
-            if draft:
-                continue
             if k.startswith(context['container_path']) and k != context['rel_path']:
                 index_list.append(site[k])
 

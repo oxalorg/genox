@@ -6,11 +6,13 @@ import json
 from pathlib import Path
 from datetime import date
 from datetime import datetime
+from datetime import timezone
 
 import markdown2
 import yaml
 from jinja2 import Environment, FileSystemLoader
 import re
+from feedgen.feed import FeedGenerator
 
 GENOX_IGNORE_LIST = {}
 
@@ -292,38 +294,133 @@ def sitemap(site, dst):
     with open(os.path.join(dst, 'sitemap.xml'), 'w', encoding='utf-8') as f:
         f.write(xml)
 
+
+def generate_feeds(site, dst):
+    """Generate RSS and Atom feeds for the blog posts."""
+    # Get site configuration
+    site_config = site.get("_config", {})
+    site_url = site_config.get("site", {}).get("url", "")
+    site_title = site_config.get("site", {}).get("title", "Blog")
+    site_description = site_config.get("site", {}).get(
+        "description", "A blog generated with Genox"
+    )
+    site_author = site_config.get("site", {}).get("author", "")
+
+    # Filter and sort blog posts
+    blog_posts = []
+    for path, post in site.items():
+        if path == "_config":
+            continue
+        # Include all posts that are not drafts and not index pages
+        if not post.get("draft", False) and not post.get("is_index", False):
+            blog_posts.append((path, post))
+
+    blog_posts.sort(key=lambda x: x[1].get("published_at", 0), reverse=True)
+
+    # Take only the most recent posts for the feed (usually 10-20 items)
+    blog_posts = blog_posts[:20]
+
+    if not blog_posts:
+        logging.info("No blog posts found for feed generation")
+        return
+
+    # Create feed generator
+    fg = FeedGenerator()
+    fg.id(site_url)
+    fg.title(site_title)
+    fg.link(href=site_url, rel="alternate")
+    fg.description(site_description)
+    fg.language("en")
+
+    if site_author:
+        fg.author({"name": site_author})
+
+    # Add blog posts to feed
+    for path, post in blog_posts:
+        fe = fg.add_entry()
+        entry_url = f"{site_url}{post['rel_url']}"
+        fe.id(entry_url)
+        fe.title(post.get("title", "Untitled"))
+        fe.link(href=entry_url)
+
+        # Use published date
+        post_date = post.get("date")
+        if post_date:
+            # Convert date to datetime with timezone info
+            post_datetime = datetime.combine(post_date, datetime.min.time())
+            post_datetime = post_datetime.replace(tzinfo=timezone.utc)
+            fe.published(post_datetime)
+            fe.updated(post_datetime)
+
+        # Add description/content
+        if post.get("excerpt"):
+            fe.description(post["excerpt"])
+
+        # Add full content
+        fe.content(post.get("content", ""), type="html")
+
+        # Add author if available
+        author = post.get("author", site_author)
+        if author:
+            fe.author({"name": author})
+
+        # Add categories/tags
+        tags = post.get("tags", [])
+        for tag in tags:
+            fe.category(term=tag)
+
+    # Generate RSS feed
+    rss_path = os.path.join(dst, "feed.xml")
+    fg.rss_file(rss_path, pretty=True)
+    logging.info(f"Generated RSS feed: {rss_path}")
+
+    # Generate Atom feed
+    atom_path = os.path.join(dst, "atom.xml")
+    fg.atom_file(atom_path, pretty=True)
+    logging.info(f"Generated Atom feed: {atom_path}")
+
+
 def main():
-    config = yaml.load(open('config.yml').read(), Loader=yaml.FullLoader)
+    config = yaml.load(open("config.yml").read(), Loader=yaml.FullLoader)
     GenHook.after_config_read(config)
-    src, dst, layout_dir, md_ext = config['input_dir'], config['output_dir'], config['layout_dir'], config['md_ext']
+    src, dst, layout_dir, md_ext = (
+        config["input_dir"],
+        config["output_dir"],
+        config["layout_dir"],
+        config["md_ext"],
+    )
     global GENOX_IGNORE_LIST
     try:
-        with open('.genoxignore', 'r') as fp:
+        with open(".genoxignore", "r") as fp:
             GENOX_IGNORE_LIST = fp.read().splitlines()
     except FileNotFoundError:
         logging.info(".genoxignore file not found")
 
-    static_dir = config['static_dir']
+    static_dir = config["static_dir"]
     rebuild_tree_hardlinks(src, dst, static_dir, md_ext)
     site = index(src, md_ext, config)
     ghost_exporter(site)
-    jinja_renderer = get_jinja_renderer(layout_dir, config['defaults'], globals=site)
+    jinja_renderer = get_jinja_renderer(layout_dir, config["defaults"], globals=site)
     # print(site)
     build(site, dst, jinja_renderer)
     sitemap(site, dst)
+    generate_feeds(site, dst)
     return site
 
 
 def cli():
-    logging.basicConfig(filename='.genox.log', filemode='w', level=logging.DEBUG)
+    logging.basicConfig(filename=".genox.log", filemode="w", level=logging.DEBUG)
     logging.info("Starting genox..")
     t_start = time.time()
-    site = main()
-    print("Site built in \033[43m\033[31m{:0.3f}\033[0m\033[49m seconds. That's quite fast, ain't it?".format(
-        time.time() - t_start))
+    main()
+    print(
+        "Site built in \033[43m\033[31m{:0.3f}\033[0m\033[49m seconds. That's quite fast, ain't it?".format(
+            time.time() - t_start
+        )
+    )
     # print("Built: {} pages.".format(len(oxgen.site['pages'])))
     logging.info("Finished. Exiting...")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

@@ -1,4 +1,0 @@
-markdown2
-pyyaml
-jinja2
-Pygments

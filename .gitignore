@@ -3,5 +3,12 @@ __pycache__/
 /dist
 *.egg-info
 /public
+.venv/
+venv/
 
 .genox.log
+ghost.json
+
+# uv
+.ruff_cache/
+uv.lock

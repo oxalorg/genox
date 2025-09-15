@@ -370,11 +370,6 @@ def generate_feeds(site, dst):
         for tag in tags:
             fe.category(term=tag)
 
-    # Generate RSS feed
-    rss_path = os.path.join(dst, "feed.xml")
-    fg.rss_file(rss_path, pretty=True)
-    logging.info(f"Generated RSS feed: {rss_path}")
-
     # Generate Atom feed
     atom_path = os.path.join(dst, "atom.xml")
     fg.atom_file(atom_path, pretty=True)

@@ -320,6 +320,7 @@ def generate_feeds(site, dst):
 
     # Take only the most recent posts for the feed (usually 10-20 items)
     blog_posts = blog_posts[:20]
+    blog_posts.reverse()
 
     if not blog_posts:
         logging.info("No blog posts found for feed generation")

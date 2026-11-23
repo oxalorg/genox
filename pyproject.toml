@@ -57,4 +57,4 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
+only-include = ["genox.py"]

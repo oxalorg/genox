@@ -396,7 +396,8 @@ def main():
     static_dir = config["static_dir"]
     rebuild_tree_hardlinks(src, dst, static_dir, md_ext)
     site = index(src, md_ext, config)
-    ghost_exporter(site)
+    if config.get("ghost_export", False):
+        ghost_exporter(site)
     jinja_renderer = get_jinja_renderer(layout_dir, config["defaults"], globals=site)
     # print(site)
     build(site, dst, jinja_renderer)

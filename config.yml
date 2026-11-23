@@ -19,3 +19,6 @@ site:
   google_analytics: "UA-GENOX"
 
 manifest_file_name: "manfiest.json"
+
+# write ghost.json (Ghost import format) for posts under blog/
+ghost_export: false

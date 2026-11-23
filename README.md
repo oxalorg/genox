@@ -302,3 +302,8 @@ Check it out here: https://github.com/oxalorg/vim-genox
  > “Pare down to the essence, but don't remove the poetry.” ― Leonard Koren
 
  Please leave a star :)
+
+### Ghost export
+
+Set `ghost_export: true` in `config.yml` to also write a `ghost.json`
+(Ghost import format) with every dated post under `blog/`. It's off by default.
